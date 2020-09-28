@@ -58,4 +58,4 @@ if __name__ == "__main__":
 				
 	acc = np.mean(batches_acc)
 		
-	print 'deploy accuracy:', acc
+	print('deploy accuracy:', acc)

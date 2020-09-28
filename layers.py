@@ -65,9 +65,9 @@ class LayerTrain(object):
 		# prune weights that are smaller then threshold - make them zero
 		self.pruning_mask_data = (np.abs(w_data) >= threshold).astype(np.float32) 
 
-		print 'layer:', self.name
-		print '\tremaining weights:', int(np.sum(self.pruning_mask_data))	
-		print '\ttotal weights:', self.num_total_weights	
+		print('layer:', self.name)
+		print('\tremaining weights:', int(np.sum(self.pruning_mask_data)))	
+		print('\ttotal weights:', self.num_total_weights)	
 						
 		sess.run(self.assign_w, feed_dict={self.w_PH: self.pruning_mask_data*w_data})
 
@@ -132,8 +132,8 @@ class LayerTrain(object):
 		
 		self.quantize_weights_update(sess)
 
-		print 'layer:', self.name
-		print '\tcentroids:', self.centroids
+		print('layer:', self.name)
+		print('\tcentroids:', self.centroids)
 		
 	def group_and_reduce_gradient(self, grad):
 		
@@ -210,9 +210,9 @@ class FcLayerDeploy(object):
 			
 			self.w_matrix = tf.constant(matrix * prune_mask) # tf dense matrix
 		
-		print 'layer:', name
-		print '\tvalid matrix weights:', np.sum(prune_mask)
-		print '\ttotal matrix weights:', np.product(self.w_matrix.shape)
+		print('layer:', name)
+		print('\tvalid matrix weights:', np.sum(prune_mask))
+		print('\ttotal matrix weights:', np.product(self.w_matrix.shape))
 				
 	def forward_matmul(self, x):
 		
@@ -252,10 +252,10 @@ class ConvLayerDeploy(object):
 		
 		self.w_tensor = tf.constant(tensor * prune_mask)
 
-		print 'layer:', name
-		print '\tvalid matrix weights:', int(np.sum(prune_mask))
-		print '\ttotal tensor weights:', np.product(self.w_tensor.shape)
-		print '\ttotal matrix weights:', np.product(self.w_matrix.shape)
+		print('layer:', name)
+		print('\tvalid matrix weights:', int(np.sum(prune_mask)))
+		print('\ttotal tensor weights:', np.product(self.w_tensor.shape))
+		print('\ttotal matrix weights:', np.product(self.w_matrix.shape))
 
 	def get_linear_pos(self, i, j, W):	# row major
 		
