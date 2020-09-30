@@ -244,6 +244,7 @@ class ConvLayerDeploy(object):
 
 		if self.dense == False:
 			indices, values, dense_shape = self.tensor_to_matrix(tensor, prune_mask, H_in, W_in, stride)
+			dense_shape[1]=int(round(dense_shape[1]))
 			self.w_matrix = tf.SparseTensor(indices, values, dense_shape) # tf sparse matrix
 			
 		else:
@@ -309,8 +310,8 @@ class ConvLayerDeploy(object):
 								if prune_mask[i][j][d_in][d_out] == 0.0:
 									continue		
 								
-								pos_in = self.get_linear_pos(i_in, j_in, W_in) + d_in * H_in * W_in
-								pos_out = self.get_linear_pos(i_out, j_out, W_out) + d_out * H_out * W_out
+								pos_in = int(self.get_linear_pos(i_in, j_in, W_in) + d_in * H_in * W_in)
+								pos_out = int(self.get_linear_pos(i_out, j_out, W_out) + d_out * H_out * W_out)
 								
 								if self.dense == False:
 									indices.append([pos_in, pos_out])
@@ -332,7 +333,7 @@ class ConvLayerDeploy(object):
 		
 	def forward_matmul_postprocess(self, x):
 
-		x = tf.reshape(x,(-1, self.D_out, self.H_out, self.W_out))
+		x = tf.reshape(x,[-1, self.D_out, int(self.H_out), int(self.W_out)])
 		x = tf.transpose(x, (0, 2, 3, 1))
 	
 		return x
