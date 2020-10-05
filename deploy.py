@@ -1,4 +1,5 @@
 import tensorflow.compat.v1 as tf
+from tensorflow.python import debug as tf_debug    #Adding to tensorboard debugger
 tf.disable_v2_behavior()
 import numpy as np
 import sys
@@ -22,6 +23,7 @@ if __name__ == "__main__":
 	x = L1.forward_matmul_preprocess(x_PH)
 	x = tf.nn.relu(L1.forward_matmul(x))
 	x = L1.forward_matmul_postprocess(x)
+	#x = tf.nn.relu(L1.forward(x_PH))
 	
 	weights, prune_mask = load_weights(weights_dir, 'conv2')
 	L2 = ConvLayerDeploy(weights, prune_mask, x.shape[1], x.shape[2], 2, 'conv2')
@@ -53,7 +55,9 @@ if __name__ == "__main__":
 	
 		batch_x, batch_y = mnist.test.next_batch(1000)
 		batch_x = np.reshape(batch_x,(-1, 28, 28, 1))	
-	
+
+		writer = tf.summary.FileWriter('./graphs', sess.graph)  # Added this line to enable tensorboard
+		#sess = tf_debug.TensorBoardDebugWrapperSession(sess, "cordelia:6067")  # adding debugger on cordelia PC in RRLAB on port 6006
 		batch_acc = sess.run(accuracy,feed_dict={x_PH: batch_x, labels: batch_y})
 		batches_acc.append(batch_acc)
 				
