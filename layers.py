@@ -65,7 +65,7 @@ class LayerTrain(object):
 		# prune weights that are smaller then threshold - make them zero
 		self.pruning_mask_data = (np.abs(w_data) >= threshold).astype(np.float32) 
 
-		print('layer:', self.name)
+		print('layerr:', self.name)
 		print('\tremaining weights:', int(np.sum(self.pruning_mask_data)))	
 		print('\ttotal weights:', self.num_total_weights)	
 						
@@ -266,8 +266,8 @@ class ConvLayerDeploy(object):
 				
 		# assume padding type 'SAME' and padding value 0 
 
-		H_out = int(H_in +1)/stride # padding 'SAME'
-		W_out = int(W_in +1)/stride # padding 'SAME'
+		H_out = int(int(H_in +1)/stride) # padding 'SAME'
+		W_out = int(int(W_in +1)/stride) # padding 'SAME'
 		H_in = int(H_in)
 		W_in = int(W_in)
 					
@@ -320,7 +320,7 @@ class ConvLayerDeploy(object):
 									matrix[pos_in][pos_out] = tensor[i][j][d_in][d_out]
 
 		if self.dense == False:
-			return indices, values, dense_shape
+			return np.round(indices), values, dense_shape
 		else:
 			return matrix
 
