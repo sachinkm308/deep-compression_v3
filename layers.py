@@ -294,14 +294,14 @@ class ConvLayerDeploy(object):
 
 						for i in range(kH):
 							
-							i_in = int(i_in_center + i - kH/2)
+							i_in = int(i_in_center + i - kH/2)  #Changed to int as the indices were generating float values
 								
 							if i_in < 0 or i_in >= H_in: # padding value 0 
 								continue 
 													
 							for j in range(kW):
 								
-								j_in = int(j_in_center + j -kW/2)  #Added int to prevent rounding off
+								j_in = int(j_in_center + j -kW/2) #Changed to int as the indices were generating float values
 								
 								if j_in < 0 or j_in >= W_in: # padding value 0 
 									continue
@@ -341,26 +341,6 @@ class ConvLayerDeploy(object):
 	def forward_matmul(self, x):
 		
 		if self.dense == False:
-			#w_transpose = tf.sparse.transpose(self.w_matrix, (1, 0))
-			###w_transpose = tf.sparse.transpose(self.w_matrix, (1,0 ))
-			#print("w:", w)
-			#print("w shape:", tf.shape(w))
-
-			### Changing w from SparseTensor to dense
-			#w = tf.sparse.to_dense(self.w_matrix, default_value=None, validate_indices=True)
-			###w_dense = tf.sparse.to_dense(self.w_matrix, default_value=0, validate_indices=True)
-			#w_transpose_dense = tf.sparse.to_dense(w_transpose, default_value=0, validate_indices=True)
-			###
-
-			###x = tf.transpose(x, (1, 0))
-			###print("x - ", tf.shape(x))
-			###print("x:", x)
-			#print("Rank of w",tf.rank(w_dense))
-			#x = tf.sparse.sparse_dense_matmul(w_transpose, x, adjoint_a=False, adjoint_b=False, name=None) # only left matrix can be sparse hence transpositions ### Changing tf.sparse.matmul() to tf.sparse.sparse_dense_matmul()
-			###x = tf.linalg.matmul(w_dense, x, transpose_a=True, transpose_b=False, adjoint_a=False, adjoint_b=False, a_is_sparse=True, b_is_sparse=False, name=None )
-			#x = tf.linalg.matmul(self.w_matrix, x, transpose_a=True, transpose_b=False, adjoint_a=False, adjoint_b=False, a_is_sparse=True, b_is_sparse=False, name=None )
-			#x = tf.linalg.matmul(tf.sparse.to_dense(w), x, a_is_sparse=True, b_is_sparse=False)
-			###x = tf.transpose(x, (1, 0))
 
 			w = tf.sparse.transpose(self.w_matrix, (1, 0))
 			x = tf.transpose(x, (1, 0))
