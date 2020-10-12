@@ -22,8 +22,8 @@ if __name__ == "__main__":
 	L1 = ConvLayerDeploy(weights, prune_mask, x_PH.shape[1], x_PH.shape[2], 2, 'conv1')
 	x = L1.forward_matmul_preprocess(x_PH)
 	x = tf.nn.relu(L1.forward_matmul(x))
-	x = L1.forward_matmul_postprocess(x)
-	#x = tf.nn.relu(L1.forward(x_PH))
+	x = L1.forward_matmul_postprocess(x) # Output is 14x14x32
+    #x = tf.nn.relu(L1.forward(x_PH))
 	
 	weights, prune_mask = load_weights(weights_dir, 'conv2')
 	L2 = ConvLayerDeploy(weights, prune_mask, x.shape[1], x.shape[2], 2, 'conv2')

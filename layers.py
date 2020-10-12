@@ -244,7 +244,7 @@ class ConvLayerDeploy(object):
 
 		if self.dense == False:
 			indices, values, dense_shape = self.tensor_to_matrix(tensor, prune_mask, H_in, W_in, stride)
-			dense_shape[1]=int(round(dense_shape[1]))
+			#dense_shape[1]=int(round(dense_shape[1]))
 			self.w_matrix = tf.SparseTensor(indices, values, dense_shape) # tf sparse matrix
 			
 		else:
@@ -294,14 +294,14 @@ class ConvLayerDeploy(object):
 
 						for i in range(kH):
 							
-							i_in = i_in_center + i - kH/2
+							i_in = int(i_in_center + i - kH/2)  #Changed to int as the indices were generating float values
 								
 							if i_in < 0 or i_in >= H_in: # padding value 0 
 								continue 
 													
 							for j in range(kW):
 								
-								j_in = j_in_center + j -kW/2
+								j_in = int(j_in_center + j -kW/2) #Changed to int as the indices were generating float values
 								
 								if j_in < 0 or j_in >= W_in: # padding value 0 
 									continue
@@ -310,8 +310,8 @@ class ConvLayerDeploy(object):
 								if prune_mask[i][j][d_in][d_out] == 0.0:
 									continue		
 								
-								pos_in = int(self.get_linear_pos(i_in, j_in, W_in) + d_in * H_in * W_in)
-								pos_out = int(self.get_linear_pos(i_out, j_out, W_out) + d_out * H_out * W_out)
+								pos_in = self.get_linear_pos(i_in, j_in, W_in) + d_in * H_in * W_in
+								pos_out = self.get_linear_pos(i_out, j_out, W_out) + d_out * H_out * W_out
 								
 								if self.dense == False:
 									indices.append([pos_in, pos_out])
@@ -320,7 +320,7 @@ class ConvLayerDeploy(object):
 									matrix[pos_in][pos_out] = tensor[i][j][d_in][d_out]
 
 		if self.dense == False:
-			return np.round(indices), values, dense_shape
+			return indices, values, dense_shape  #Removing np.round as they don't need to be rounded anymore as i_in and j_in are changed to int
 		else:
 			return matrix
 
@@ -341,9 +341,10 @@ class ConvLayerDeploy(object):
 	def forward_matmul(self, x):
 		
 		if self.dense == False:
+
 			w = tf.sparse.transpose(self.w_matrix, (1, 0))
 			x = tf.transpose(x, (1, 0))
-			x = tf.sparse.matmul(w, x) # only left matrix can be sparse hence transpositions
+			x = tf.sparse.sparse_dense_matmul(w,x)  # only left matrix can be sparse hence transpositions ### Changing tf.sparse.matmul() to tf.sparse.sparse_dense_matmul()
 			x = tf.transpose(x, (1, 0))
 		else:
 			x = tf.matmul(x, self.w_matrix)
